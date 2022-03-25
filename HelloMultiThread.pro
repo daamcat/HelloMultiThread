@@ -28,15 +28,18 @@ SOURCES += \
         main.cpp \
         MainWindow.cpp \
     MyRunnable.cpp \
-    DummyWhile.cpp
+    DummyWhile.cpp \
+    ThreadWidget.cpp
 
 HEADERS += \
         MainWindow.h \
     MyRunnable.h \
-    DummyWhile.h
+    DummyWhile.h \
+    ThreadWidget.h
 
 FORMS += \
-        MainWindow.ui
+        MainWindow.ui \
+    ThreadWidget.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

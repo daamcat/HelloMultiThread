@@ -1,37 +1,43 @@
 #ifndef DUMMYWHILE_H
 #define DUMMYWHILE_H
 
+#include "ThreadWidget.h"
 
 #include <QWidget>
-#include <QEvent>
-struct ProgressEvent : public QEvent
+#include <QGroupBox>
+
+
+class DummyWhile : public QObject
 {
-  enum {EventId = QEvent::User};
-  explicit ProgressEvent(bool saved_ , const QString& message_) : QEvent(static_cast<QEvent::Type>(EventId)) ,
-    m_saved(saved_),
-    m_message(message_)
-  {};
-
-  const bool m_saved;
-  const QString m_message;
-
-};
-
-class DummyWhile
-{
+  // We needed to derive this class from QObject in order to call its function member using QTimer::SingleShot.
+  Q_OBJECT
 public:
-  DummyWhile(QWidget* mainWindow , volatile bool* stopped, int seconds, int iterations);
+  DummyWhile(QWidget* mainWindow , QGroupBox* groupBox, volatile bool* stopped, int seconds, int iterations);
+  ~DummyWhile();
+  void startUsingQtConcurrent();
 
-  void start();
+  void setTotal(int32_t total);
+
+signals:
+  void signalUpdateUi();
 
 
 private:
-  void doWhileInThread();
+  void checkIfDone();
 
   QWidget* m_receiver;
   volatile bool* m_stopped;
   int m_seconds;
   int m_iterations;
+  const int m_pollTimeOut = 100;
+
+  int32_t m_total; // Total number of iterations.
+  int32_t m_done; // Number of processed iterations.
+
+  QGroupBox* m_groupBox;
+
+  QVector<ThreadWidget*> m_threadWidgets;
+
 
 };
 

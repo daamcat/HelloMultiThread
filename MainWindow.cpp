@@ -1,5 +1,7 @@
 #include "MainWindow.h"
 #include "ui_MainWindow.h"
+#include "ThreadWidget.h"
+
 
 
 #include <QPushButton>
@@ -13,9 +15,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
   ui->setupUi(this);
 
-  m_dummy = new DummyWhile(dynamic_cast<QWidget*>(this), &m_stopped,10,100);
+  m_dummy = new DummyWhile(dynamic_cast<QWidget*>(this),ui->groupBox, &m_stopped,10,m_numberOfIterations);
 
   connect(ui->pushButtonStartCancel , &QPushButton::released , this , &MainWindow::slotPushButtonStartCancelReleased);
+  connect(m_dummy , &DummyWhile::signalUpdateUi , this , &MainWindow::updateUi);
 }
 
 MainWindow::~MainWindow()
@@ -33,15 +36,14 @@ void MainWindow::slotPushButtonStartCancelReleased()
   }
   if (ui->pushButtonStartCancel->text() == tr("Cancel"))
   {
-    ui->pushButtonStartCancel->setText(tr("Start"));
     return;
   }
 
-  ui->pushButtonStartCancel->setText(tr("Cancel"));
-
+  updateUi();
+  m_total = m_numberOfIterations;
   m_stopped = false;
-  m_dummy->start();
-
+  m_dummy->setTotal(m_total);
+  m_dummy->startUsingQtConcurrent();
 }
 
 bool MainWindow::event(QEvent* event)
@@ -54,4 +56,16 @@ bool MainWindow::event(QEvent* event)
     return true;
   }
   return QMainWindow::event(event);
+}
+
+void MainWindow::updateUi()
+{
+  if (ui->pushButtonStartCancel->text() == tr("Cancel"))
+  {
+    ui->pushButtonStartCancel->setText(tr("Start"));
+  }
+  else
+  {
+    ui->pushButtonStartCancel->setText(tr("Cancel"));
+  }
 }
