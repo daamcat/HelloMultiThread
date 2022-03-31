@@ -22,9 +22,6 @@ public:
 private slots:
   void slotPushButtonStartCancelReleased();
 
-protected:
-  bool event(QEvent* event);
-
 private:
   void updateUi();
 

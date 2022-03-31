@@ -46,18 +46,6 @@ void MainWindow::slotPushButtonStartCancelReleased()
   m_dummy->startUsingQtConcurrent();
 }
 
-bool MainWindow::event(QEvent* event)
-{
-  if (event->type() == static_cast<QEvent::Type>(ProgressEvent::EventId))
-  {
-    ProgressEvent* progressEvent = static_cast<ProgressEvent*>(event);
-    Q_ASSERT(progressEvent);
-    ui->lineEdit->setText(progressEvent->m_message);
-    return true;
-  }
-  return QMainWindow::event(event);
-}
-
 void MainWindow::updateUi()
 {
   if (ui->pushButtonStartCancel->text() == tr("Cancel"))

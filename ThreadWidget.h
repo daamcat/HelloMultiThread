@@ -7,11 +7,13 @@
 struct ProgressEvent : public QEvent
 {
   enum {EventId = QEvent::User};
-  explicit ProgressEvent(bool successful_ , const QString& message_) : QEvent(static_cast<QEvent::Type>(EventId)) ,
+  explicit ProgressEvent(int32_t threadNumber_, bool successful_ , const QString& message_) : QEvent(static_cast<QEvent::Type>(EventId)) ,
+    m_threadNumber(threadNumber_),
     m_successful(successful_),
     m_message(message_)
   {};
 
+  const int32_t m_threadNumber;
   const bool m_successful;
   const QString m_message;
 
@@ -26,7 +28,7 @@ class ThreadWidget : public QWidget
   Q_OBJECT
 
 public:
-  explicit ThreadWidget(int threadNumber, volatile bool* stopped, int seconds, int iterations, QWidget *parent = nullptr);
+  explicit ThreadWidget(int threadNumber, volatile bool* stopped, int seconds, int iterations, QObject* dummyWhile, QWidget* parent = nullptr);
   ~ThreadWidget();
 
   void doWhileInThread();
@@ -44,6 +46,8 @@ private:
   int m_seconds;
   int m_iterations;
   const int m_pollTimeOut = 100;
+  const int32_t m_threadNumber;
+  QObject* m_dummyWhile;
 
 };
 

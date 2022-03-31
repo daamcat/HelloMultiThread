@@ -16,6 +16,18 @@ DummyWhile::DummyWhile(QWidget* mainWindow, QGroupBox* groupBox, volatile bool* 
 
 }
 
+bool DummyWhile::event(QEvent* event)
+{
+  if (event->type() == static_cast<QEvent::Type>(ProgressEvent::EventId))
+  {
+    ProgressEvent* progressEvent = static_cast<ProgressEvent*>(event);
+    Q_ASSERT(progressEvent); // Just for testing. Prints warning message if the statement inside is False.
+    m_threadWidgets.value(progressEvent->m_threadNumber)->setLineEditText(progressEvent->m_message);
+    return true;
+  }
+  return QObject::event(event);
+}
+
 DummyWhile::~DummyWhile()
 {
   *m_stopped = true;
@@ -40,9 +52,9 @@ void DummyWhile::startUsingQtConcurrent()
   // Ref: https://doc.qt.io/qt-5/qtconcurrentrun.html#using-member-functions
   for (int iThread = 1; iThread < 3; iThread++)
   {
-    ThreadWidget* widget = new ThreadWidget(iThread, m_stopped,m_seconds,m_iterations,m_receiver);
+    ThreadWidget* widget = new ThreadWidget(iThread, m_stopped,m_seconds,m_iterations,this,m_receiver);
     vBoxLayout->addWidget(widget);
-    m_threadWidgets.push_back(widget);
+    m_threadWidgets[iThread] = widget;
 
     QtConcurrent::run(widget, &ThreadWidget::doWhileInThread);
 
@@ -63,11 +75,11 @@ void DummyWhile::checkIfDone()
   {
     if (m_done == m_total)
     {
-      QApplication::postEvent(m_receiver,new ProgressEvent(true,"All is done."));
+      QApplication::postEvent(m_receiver,new ProgressEvent(100,true,"All is done."));
     }
     else
     {
-      QApplication::postEvent(m_receiver,new ProgressEvent(true,QString::number(m_done) + " out of " + QString::number(m_total) + " is done."));
+      QApplication::postEvent(m_receiver,new ProgressEvent(100,true,QString::number(m_done) + " out of " + QString::number(m_total) + " is done."));
     }
     *m_stopped = true;
     emit signalUpdateUi();

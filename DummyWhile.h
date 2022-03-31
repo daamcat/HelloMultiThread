@@ -5,6 +5,7 @@
 
 #include <QWidget>
 #include <QGroupBox>
+#include <QMap>
 
 
 class DummyWhile : public QObject
@@ -21,6 +22,9 @@ public:
 signals:
   void signalUpdateUi();
 
+protected:
+  bool event(QEvent* event);
+
 
 private:
   void checkIfDone();
@@ -36,7 +40,7 @@ private:
 
   QGroupBox* m_groupBox;
 
-  QVector<ThreadWidget*> m_threadWidgets;
+  QMap<int32_t,ThreadWidget*> m_threadWidgets;
 
 
 };
