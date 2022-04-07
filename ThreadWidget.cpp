@@ -20,6 +20,8 @@ ThreadWidget::ThreadWidget(int threadNumber, volatile bool* stopped, int seconds
 {
   ui->setupUi(this);
   ui->label->setText("Thread " + QString::number(m_threadNumber));
+  ui->progressBar->setMinimum(0);
+  ui->progressBar->setMaximum(m_iterations);
 }
 
 ThreadWidget::~ThreadWidget()
@@ -31,11 +33,16 @@ void ThreadWidget::setLineEditText(QString text)
   ui->lineEdit->setText(text);
 }
 
+void ThreadWidget::setProgress(int progress)
+{
+  ui->progressBar->setValue(progress);
+}
+
 
 void ThreadWidget::doWhileInThread()
 {
   int msecsPerIteration = std::round(1000*m_seconds/m_iterations);
-  for (int i=0; i<m_iterations; i++)
+  for (int i=1; i <= m_iterations; i++)
   {
     if (*m_stopped)
     {
@@ -48,7 +55,7 @@ void ThreadWidget::doWhileInThread()
 
     // You are inside another thread. From here you shouldn't try to access GUI:
     //ui->lineEdit->setText(QString::number(m_done) + " out of " + QString::number(m_iterations) + ".");
-    QApplication::postEvent(m_dummyWhile, new ProgressEvent(m_threadNumber, true, QString::number(i) + "."));
+    QApplication::postEvent(m_dummyWhile, new ProgressEvent(m_threadNumber, true, i, QString::number(i) + "."));
   }
 }
 

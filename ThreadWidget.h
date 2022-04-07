@@ -7,14 +7,16 @@
 struct ProgressEvent : public QEvent
 {
   enum {EventId = QEvent::User};
-  explicit ProgressEvent(int32_t threadNumber_, bool successful_ , const QString& message_) : QEvent(static_cast<QEvent::Type>(EventId)) ,
+  explicit ProgressEvent(int32_t threadNumber_, bool successful_ , int32_t progress_, const QString& message_) : QEvent(static_cast<QEvent::Type>(EventId)) ,
     m_threadNumber(threadNumber_),
     m_successful(successful_),
+    m_progress(progress_),
     m_message(message_)
   {};
 
   const int32_t m_threadNumber;
   const bool m_successful;
+  const int32_t m_progress;
   const QString m_message;
 
 };
@@ -33,6 +35,7 @@ public:
 
   void doWhileInThread();
   void setLineEditText(QString text);
+  void setProgress(int progress);
 
 signals:
   void signalUpdateUi();

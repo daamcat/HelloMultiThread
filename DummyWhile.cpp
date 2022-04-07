@@ -23,6 +23,7 @@ bool DummyWhile::event(QEvent* event)
     ProgressEvent* progressEvent = static_cast<ProgressEvent*>(event);
     Q_ASSERT(progressEvent); // Just for testing. Prints warning message if the statement inside is False.
     m_threadWidgets.value(progressEvent->m_threadNumber)->setLineEditText(progressEvent->m_message);
+    m_threadWidgets.value(progressEvent->m_threadNumber)->setProgress(progressEvent->m_progress);
     return true;
   }
   return QObject::event(event);
@@ -50,7 +51,7 @@ void DummyWhile::startUsingQtConcurrent()
   m_done = 0;
   QVBoxLayout* vBoxLayout = new QVBoxLayout();
   // Ref: https://doc.qt.io/qt-5/qtconcurrentrun.html#using-member-functions
-  for (int iThread = 1; iThread < 3; iThread++)
+  for (int iThread = 1; iThread <= QThread::idealThreadCount(); iThread++)
   {
     ThreadWidget* widget = new ThreadWidget(iThread, m_stopped,m_seconds,m_iterations,this,m_receiver);
     vBoxLayout->addWidget(widget);
@@ -75,11 +76,11 @@ void DummyWhile::checkIfDone()
   {
     if (m_done == m_total)
     {
-      QApplication::postEvent(m_receiver,new ProgressEvent(100,true,"All is done."));
+      QApplication::postEvent(m_receiver,new ProgressEvent(100,true,m_total,"All is done."));
     }
     else
     {
-      QApplication::postEvent(m_receiver,new ProgressEvent(100,true,QString::number(m_done) + " out of " + QString::number(m_total) + " is done."));
+      QApplication::postEvent(m_receiver,new ProgressEvent(100,true,m_done, QString::number(m_done) + " out of " + QString::number(m_total) + " is done."));
     }
     *m_stopped = true;
     emit signalUpdateUi();
