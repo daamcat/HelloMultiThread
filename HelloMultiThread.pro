@@ -28,14 +28,14 @@ SOURCES += \
         main.cpp \
         MainWindow.cpp \
     MyRunnable.cpp \
-    DummyWhile.cpp \
-    ThreadWidget.cpp
+    ThreadWidget.cpp \
+    MyConcurrent.cpp
 
 HEADERS += \
         MainWindow.h \
     MyRunnable.h \
-    DummyWhile.h \
-    ThreadWidget.h
+    ThreadWidget.h \
+    MyConcurrent.h
 
 FORMS += \
         MainWindow.ui \

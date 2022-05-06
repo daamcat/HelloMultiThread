@@ -33,12 +33,10 @@ public:
   explicit ThreadWidget(int threadNumber, volatile bool* stopped, int seconds, int iterations, QObject* dummyWhile, QWidget* parent = nullptr);
   ~ThreadWidget();
 
-  void doWhileInThread();
+  void loopInThreadPostEvent();
+  void loopInThreadInvokeMethod();
   void setLineEditText(QString text);
   void setProgress(int progress);
-
-signals:
-  void signalUpdateUi();
 
 private:
   Ui::ThreadWidget *ui;

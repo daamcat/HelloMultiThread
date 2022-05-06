@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QEvent>
 
-#include "DummyWhile.h"
+#include "MyConcurrent.h"
 
 namespace Ui {
 class MainWindow;
@@ -32,7 +32,7 @@ private:
 
   int32_t m_numberOfIterations = 100;
 
-  DummyWhile* m_dummy;
+  MyConcurrent* m_concurrent;
 
 };
 

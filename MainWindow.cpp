@@ -15,10 +15,10 @@ MainWindow::MainWindow(QWidget *parent) :
 {
   ui->setupUi(this);
 
-  m_dummy = new DummyWhile(dynamic_cast<QWidget*>(this),ui->groupBox, &m_stopped,10,m_numberOfIterations);
+  m_concurrent = new MyConcurrent(dynamic_cast<QWidget*>(this),ui->groupBox, &m_stopped,10,m_numberOfIterations);
 
   connect(ui->pushButtonStartCancel , &QPushButton::released , this , &MainWindow::slotPushButtonStartCancelReleased);
-  connect(m_dummy , &DummyWhile::signalUpdateUi , this , &MainWindow::updateUi);
+  connect(m_concurrent , &MyConcurrent::signalUpdateUi , this , &MainWindow::updateUi);
 }
 
 MainWindow::~MainWindow()
@@ -42,8 +42,9 @@ void MainWindow::slotPushButtonStartCancelReleased()
   updateUi();
   m_total = m_numberOfIterations;
   m_stopped = false;
-  m_dummy->setTotal(m_total);
-  m_dummy->startUsingQtConcurrent();
+  m_concurrent->setTotal(m_total);
+  m_concurrent->startUsingQtConcurrent();
+  //m_concurrent->startUsingQRunnable();
 }
 
 void MainWindow::updateUi()

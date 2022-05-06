@@ -39,7 +39,7 @@ void ThreadWidget::setProgress(int progress)
 }
 
 
-void ThreadWidget::doWhileInThread()
+void ThreadWidget::loopInThreadPostEvent()
 {
   int msecsPerIteration = std::round(1000*m_seconds/m_iterations);
   for (int i=1; i <= m_iterations; i++)
@@ -56,6 +56,31 @@ void ThreadWidget::doWhileInThread()
     // You are inside another thread. From here you shouldn't try to access GUI:
     //ui->lineEdit->setText(QString::number(m_done) + " out of " + QString::number(m_iterations) + ".");
     QApplication::postEvent(m_dummyWhile, new ProgressEvent(m_threadNumber, true, i, QString::number(i) + "."));
+  }
+}
+
+void ThreadWidget::loopInThreadInvokeMethod()
+{
+  int msecsPerIteration = std::round(1000*m_seconds/m_iterations);
+  for (int i=1; i <= m_iterations; i++)
+  {
+    if (*m_stopped)
+    {
+      break;
+    }
+    qint32 low = msecsPerIteration - 0.2*msecsPerIteration;
+    qint32 high = msecsPerIteration + 0.2*msecsPerIteration;
+    msecsPerIteration = QRandomGenerator::global()->bounded(low,high);
+    QThread::msleep(msecsPerIteration);
+
+    // You are inside another thread. From here you shouldn't try to access GUI:
+    //ui->lineEdit->setText(QString::number(m_done) + " out of " + QString::number(m_iterations) + ".");
+
+    QMetaObject::invokeMethod(m_dummyWhile,"announceProgress", Qt::QueuedConnection
+                              ,Q_ARG(int,m_threadNumber)
+                              ,Q_ARG(bool,true)
+                              ,Q_ARG(int,i)
+                              ,Q_ARG(QString,QString::number(i) + "."));
   }
 }
 

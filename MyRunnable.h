@@ -1,7 +1,12 @@
 #ifndef MYRUNNABLE_H
 #define MYRUNNABLE_H
 
+#include "ThreadWidget.h"
+
 #include <QRunnable>
+#include <QWidget>
+#include <QGroupBox>
+#include <QMap>
 
 
 class MyRunnable : public QRunnable
@@ -18,7 +23,16 @@ In other words, no change in access level of members in derived class.
 
 {
 public:
-  MyRunnable();
+  explicit MyRunnable(ThreadWidget* threadWidget);
+  ~MyRunnable();
+
+
+private:
+  void run() override;
+
+  ThreadWidget* m_threadWidget = nullptr;
+
+
 };
 
 #endif // MYRUNNABLE_H
